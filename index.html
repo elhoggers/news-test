@@ -18,11 +18,14 @@
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Fetch and display news
-        const RSS_URL = 'https://rust.facepunch.com/news.xml'; // Ensure this is the correct RSS feed URL
+        const RSS_URL = 'https://rust.facepunch.com/rss.xml'; // Correct RSS feed URL
         const parser = new RSSParser();
         axios.get(RSS_URL).then(response => {
             parser.parseString(response.data, function (err, feed) {
-                if (err) throw err;
+                if (err) {
+                    console.error('Error parsing RSS feed:', err);
+                    return;
+                }
                 const newsContainer = document.getElementById('news-container');
                 feed.items.forEach(item => {
                     const news = document.createElement('div');
@@ -49,6 +52,8 @@
                     observer.observe(news);
                 });
             });
+        }).catch(error => {
+            console.error('Error fetching RSS feed:', error);
         });
     });
     </script>
