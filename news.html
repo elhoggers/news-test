@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rustralia News</title>
+    <link rel="stylesheet" href="news.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+<body>
+    <section id="news" class="news-section">
+        <h2>Latest News</h2>
+        <div id="news-container"></div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rss-parser/3.12.0/rss-parser.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fetch and display news
+        const RSS_URL = 'https://rust.facepunch.com/news.xml'; // Ensure this is the correct RSS feed URL
+        const parser = new RSSParser();
+        axios.get(RSS_URL).then(response => {
+            parser.parseString(response.data, function (err, feed) {
+                if (err) throw err;
+                const newsContainer = document.getElementById('news-container');
+                feed.items.forEach(item => {
+                    const news = document.createElement('div');
+                    news.className = 'news';
+                    news.innerHTML = `
+                        <h3>${item.title}</h3>
+                        <p>${item.contentSnippet}</p>
+                        <a href="${item.link}" target="_blank">Read more</a>
+                    `;
+                    newsContainer.appendChild(news);
+                });
+
+                // Apply Intersection Observer
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('show');
+                        }
+                    });
+                });
+
+                const newsItems = document.querySelectorAll('.news');
+                newsItems.forEach(news => {
+                    observer.observe(news);
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>
