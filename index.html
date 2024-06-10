@@ -13,15 +13,15 @@
         <div id="news-container"></div>
     </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rss-parser/3.12.0/rss-parser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/rss-parser@3.12.0/dist/rss-parser.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         console.log('Document loaded');
 
         if (typeof RSSParser !== 'undefined') {
             // Fetch and display news
-            const RSS_URL = 'https://rust.facepunch.com/rss.xml'; // Ensure this is the correct RSS feed URL
+            const RSS_URL = 'https://rust.facepunch.com/news/rss'; // Ensure this is the correct RSS feed URL
             const parser = new RSSParser();
 
             axios.get(RSS_URL)
