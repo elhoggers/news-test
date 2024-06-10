@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rustralia News</title>
     <link rel="stylesheet" href="news.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
 </head>
 <body>
     <section id="news" class="news-section">
@@ -13,52 +13,56 @@
         <div id="news-container"></div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rss-parser/3.12.0/rss-parser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         console.log('Document loaded');
 
-        // Fetch and display news
-        const RSS_URL = 'https://rust.facepunch.com/rss.xml'; // Ensure this is the correct RSS feed URL
-        const parser = new RSSParser();
+        if (typeof RSSParser !== 'undefined') {
+            // Fetch and display news
+            const RSS_URL = 'https://rust.facepunch.com/rss.xml'; // Ensure this is the correct RSS feed URL
+            const parser = new RSSParser();
 
-        axios.get(RSS_URL)
-            .then(response => {
-                console.log('RSS feed fetched successfully');
-                return parser.parseString(response.data);
-            })
-            .then(feed => {
-                console.log('RSS feed parsed successfully', feed);
-                const newsContainer = document.getElementById('news-container');
-                feed.items.forEach(item => {
-                    const news = document.createElement('div');
-                    news.className = 'news';
-                    news.innerHTML = `
-                        <h3>${item.title}</h3>
-                        <p>${item.contentSnippet}</p>
-                        <a href="${item.link}" target="_blank">Read more</a>
-                    `;
-                    newsContainer.appendChild(news);
-                });
-
-                // Apply Intersection Observer
-                const observer = new IntersectionObserver(entries => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('show');
-                        }
+            axios.get(RSS_URL)
+                .then(response => {
+                    console.log('RSS feed fetched successfully');
+                    return parser.parseString(response.data);
+                })
+                .then(feed => {
+                    console.log('RSS feed parsed successfully', feed);
+                    const newsContainer = document.getElementById('news-container');
+                    feed.items.forEach(item => {
+                        const news = document.createElement('div');
+                        news.className = 'news';
+                        news.innerHTML = `
+                            <h3>${item.title}</h3>
+                            <p>${item.contentSnippet}</p>
+                            <a href="${item.link}" target="_blank">Read more</a>
+                        `;
+                        newsContainer.appendChild(news);
                     });
-                });
 
-                const newsItems = document.querySelectorAll('.news');
-                newsItems.forEach(news => {
-                    observer.observe(news);
+                    // Apply Intersection Observer
+                    const observer = new IntersectionObserver(entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('show');
+                            }
+                        });
+                    });
+
+                    const newsItems = document.querySelectorAll('.news');
+                    newsItems.forEach(news => {
+                        observer.observe(news);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching or parsing RSS feed:', error);
                 });
-            })
-            .catch(error => {
-                console.error('Error fetching or parsing RSS feed:', error);
-            });
+        } else {
+            console.error('RSSParser is not defined');
+        }
     });
     </script>
 </body>
